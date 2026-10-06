@@ -1,0 +1,1498 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Угадай слово по мысли</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+:root {
+    --bg: #08111f;
+    --card: #101d31;
+    --card2: #162640;
+    --text: #f4f7ff;
+    --muted: #91a4c2;
+    --primary: #4d8dff;
+    --primary2: #6b5cff;
+    --success: #32d583;
+    --danger: #ff5577;
+    --gold: #ffc857;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: Arial, Helvetica, sans-serif;
+    color: var(--text);
+    background:
+        radial-gradient(circle at 20% 10%, #182f5d 0, transparent 35%),
+        radial-gradient(circle at 90% 90%, #25194e 0, transparent 35%),
+        var(--bg);
+}
+
+button,
+input {
+    font: inherit;
+}
+
+button {
+    cursor: pointer;
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* LOGIN */
+
+.login-screen {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.login-box {
+    width: 100%;
+    max-width: 520px;
+    padding: 40px;
+    border: 1px solid rgba(255,255,255,.1);
+    border-radius: 28px;
+    background: rgba(16,29,49,.9);
+    box-shadow: 0 30px 100px rgba(0,0,0,.45);
+    text-align: center;
+}
+
+.logo {
+    font-size: 58px;
+    margin-bottom: 8px;
+}
+
+h1 {
+    margin: 0 0 10px;
+    font-size: 34px;
+}
+
+.subtitle {
+    color: var(--muted);
+    margin-bottom: 30px;
+}
+
+.profile-buttons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+}
+
+.profile-btn {
+    padding: 20px;
+    border: 1px solid rgba(255,255,255,.1);
+    border-radius: 18px;
+    color: white;
+    background: var(--card2);
+    transition: .2s;
+}
+
+.profile-btn:hover {
+    transform: translateY(-3px);
+    border-color: var(--primary);
+    background: #1b3153;
+}
+
+/* APP */
+
+.app {
+    min-height: 100vh;
+}
+
+header {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    backdrop-filter: blur(18px);
+    background: rgba(8,17,31,.8);
+    border-bottom: 1px solid rgba(255,255,255,.08);
+}
+
+.nav {
+    max-width: 1200px;
+    margin: auto;
+    padding: 15px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+}
+
+.brand {
+    font-weight: 800;
+    font-size: 20px;
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.balance {
+    background: rgba(255,200,87,.12);
+    border: 1px solid rgba(255,200,87,.3);
+    color: var(--gold);
+    padding: 9px 14px;
+    border-radius: 12px;
+    font-weight: 700;
+}
+
+.small-btn {
+    border: 0;
+    color: white;
+    background: #243653;
+    border-radius: 10px;
+    padding: 9px 12px;
+}
+
+.container {
+    max-width: 1050px;
+    margin: auto;
+    padding: 35px 20px 70px;
+}
+
+.tabs {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 25px;
+}
+
+.tab {
+    border: 0;
+    color: var(--muted);
+    background: var(--card);
+    padding: 12px 20px;
+    border-radius: 12px;
+}
+
+.tab.active {
+    color: white;
+    background: var(--primary);
+}
+
+.page {
+    display: none;
+}
+
+.page.active {
+    display: block;
+}
+
+/* GAME */
+
+.game-card {
+    max-width: 800px;
+    margin: auto;
+    padding: 35px;
+    border-radius: 28px;
+    background: rgba(16,29,49,.9);
+    border: 1px solid rgba(255,255,255,.08);
+    box-shadow: 0 25px 80px rgba(0,0,0,.3);
+}
+
+.game-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: var(--muted);
+    margin-bottom: 25px;
+}
+
+.progress {
+    height: 8px;
+    background: #263752;
+    border-radius: 100px;
+    overflow: hidden;
+    margin-bottom: 30px;
+}
+
+.progress-fill {
+    height: 100%;
+    width: 14%;
+    background: linear-gradient(90deg, var(--primary), var(--primary2));
+    transition: .3s;
+}
+
+.thought-label {
+    color: var(--primary);
+    font-weight: 700;
+    margin-bottom: 12px;
+}
+
+.question {
+    font-size: 27px;
+    line-height: 1.35;
+    margin-bottom: 25px;
+}
+
+.answer-form {
+    display: flex;
+    gap: 10px;
+}
+
+.answer-input {
+    min-width: 0;
+    flex: 1;
+    border: 1px solid #304362;
+    outline: none;
+    color: white;
+    background: #0b1627;
+    padding: 16px;
+    border-radius: 14px;
+}
+
+.answer-input:focus {
+    border-color: var(--primary);
+}
+
+.main-btn {
+    border: 0;
+    color: white;
+    background: linear-gradient(135deg, var(--primary), var(--primary2));
+    padding: 15px 22px;
+    border-radius: 14px;
+    font-weight: 700;
+}
+
+.main-btn:hover {
+    filter: brightness(1.12);
+}
+
+.hint {
+    color: var(--muted);
+    margin-top: 15px;
+    font-size: 14px;
+}
+
+.result {
+    text-align: center;
+    padding: 20px 0 5px;
+}
+
+.result-icon {
+    font-size: 70px;
+}
+
+.result h2 {
+    font-size: 32px;
+}
+
+.reward {
+    color: var(--gold);
+    font-size: 22px;
+    font-weight: 800;
+}
+
+.next-btn {
+    margin-top: 20px;
+}
+
+/* STATS */
+
+.stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+    margin-bottom: 25px;
+}
+
+.stat {
+    background: var(--card);
+    border: 1px solid rgba(255,255,255,.07);
+    padding: 25px;
+    border-radius: 18px;
+}
+
+.stat-number {
+    font-size: 30px;
+    font-weight: 800;
+}
+
+.stat-label {
+    color: var(--muted);
+    margin-top: 5px;
+}
+
+/* SHOP */
+
+.shop-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 18px;
+}
+
+.theme-card {
+    padding: 22px;
+    border-radius: 20px;
+    background: var(--card);
+    border: 1px solid rgba(255,255,255,.08);
+}
+
+.theme-preview {
+    height: 100px;
+    border-radius: 14px;
+    margin-bottom: 18px;
+}
+
+.theme-card h3 {
+    margin: 0 0 8px;
+}
+
+.theme-card p {
+    color: var(--muted);
+    min-height: 40px;
+}
+
+.price {
+    color: var(--gold);
+    font-weight: 800;
+    margin: 15px 0;
+}
+
+.theme-btn {
+    width: 100%;
+    border: 0;
+    padding: 12px;
+    border-radius: 12px;
+    color: white;
+    background: #263b5d;
+}
+
+.theme-btn:disabled {
+    opacity: .5;
+    cursor: not-allowed;
+}
+
+.theme-btn.active {
+    background: var(--success);
+}
+
+/* THEMES */
+
+body.theme-neon {
+    --bg: #07050d;
+    --card: #110d1d;
+    --card2: #1b1029;
+    --primary: #b84dff;
+    --primary2: #26e6a3;
+}
+
+body.theme-gold {
+    --bg: #100d08;
+    --card: #1b160c;
+    --card2: #2a2110;
+    --primary: #d8a72c;
+    --primary2: #ffe49a;
+    --gold: #ffd76a;
+}
+
+body.theme-retro {
+    --bg: #101010;
+    --card: #1c1c1c;
+    --card2: #272727;
+    --primary: #42e66b;
+    --primary2: #ffe047;
+    font-family: "Courier New", monospace;
+}
+
+body.theme-cyber {
+    --bg: #050914;
+    --card: #081827;
+    --card2: #0c2635;
+    --primary: #00eaff;
+    --primary2: #ff00cc;
+}
+
+/* MOBILE */
+
+@media (max-width: 650px) {
+    .login-box {
+        padding: 28px 20px;
+    }
+
+    .profile-buttons {
+        grid-template-columns: 1fr;
+    }
+
+    .nav {
+        flex-wrap: wrap;
+    }
+
+    .game-card {
+        padding: 23px;
+    }
+
+    .question {
+        font-size: 22px;
+    }
+
+    .answer-form {
+        flex-direction: column;
+    }
+
+    .stats {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<!-- LOGIN -->
+<section id="loginScreen" class="login-screen">
+    <div class="login-box">
+        <div class="logo">🧠</div>
+        <h1>Угадай слово</h1>
+        <div class="subtitle">По мысли. По подсказке. По интуиции.</div>
+
+        <p>Выберите профиль:</p>
+
+        <div class="profile-buttons">
+            <button class="profile-btn" onclick="login('МишаBYS')">
+                👤<br><br>
+                <b>МишаBYS</b>
+            </button>
+
+            <button class="profile-btn" onclick="login('ЖеняBYS')">
+                👤<br><br>
+                <b>ЖеняBYS</b>
+            </button>
+        </div>
+    </div>
+</section>
+
+<!-- APP -->
+<div id="app" class="app hidden">
+
+<header>
+    <div class="nav">
+        <div class="brand">🧠 Угадай слово</div>
+
+        <div class="user-info">
+            <div class="balance">🧠 <span id="balance">0</span></div>
+            <span id="username"></span>
+            <button class="small-btn" onclick="logout()">Выйти</button>
+        </div>
+    </div>
+</header>
+
+<main class="container">
+
+    <div class="tabs">
+        <button class="tab active" onclick="showPage('game', this)">🎮 Игра</button>
+        <button class="tab" onclick="showPage('stats', this)">📊 Статистика</button>
+        <button class="tab" onclick="showPage('shop', this)">🎨 Магазин</button>
+    </div>
+
+    <!-- GAME -->
+    <section id="gamePage" class="page active">
+
+        <div class="game-card">
+
+            <div class="game-top">
+                <span id="questionNumber">Мысль 1 из 7</span>
+                <span id="potentialReward">Награда: 100 🧠</span>
+            </div>
+
+            <div class="progress">
+                <div id="progressFill" class="progress-fill"></div>
+            </div>
+
+            <div id="gameContent">
+
+                <div class="thought-label">💭 Мысль</div>
+
+                <div id="question" class="question"></div>
+
+                <form class="answer-form" onsubmit="checkAnswer(event)">
+                    <input
+                        id="answerInput"
+                        class="answer-input"
+                        autocomplete="off"
+                        placeholder="Введите ваш ответ..."
+                    >
+                    <button class="main-btn" type="submit">
+                        Ответить
+                    </button>
+                </form>
+
+                <div class="hint">
+                    Чем раньше угадаешь — тем больше 🧠 получишь!
+                </div>
+
+            </div>
+
+            <div id="result" class="result hidden"></div>
+
+        </div>
+
+    </section>
+
+    <!-- STATS -->
+    <section id="statsPage" class="page">
+
+        <h2>📊 Статистика</h2>
+
+        <div class="stats">
+            <div class="stat">
+                <div id="wins" class="stat-number">0</div>
+                <div class="stat-label">Побед</div>
+            </div>
+
+            <div class="stat">
+                <div id="losses" class="stat-number">0</div>
+                <div class="stat-label">Поражений</div>
+            </div>
+
+            <div class="stat">
+                <div id="wordsCount" class="stat-number">0</div>
+                <div class="stat-label">Угадано слов</div>
+            </div>
+        </div>
+
+        <div class="game-card">
+            <h2>🏆 Последние результаты</h2>
+            <div id="history"></div>
+        </div>
+
+    </section>
+
+    <!-- SHOP -->
+    <section id="shopPage" class="page">
+
+        <h2>🎨 Магазин дизайнов</h2>
+        <p class="subtitle">Покупайте темы за 🧠 Мыслишки.</p>
+
+        <div id="shopGrid" class="shop-grid"></div>
+
+    </section>
+
+</main>
+</div>
+
+<script>
+
+/* =========================================
+   БАЗА ИГРЫ
+========================================= */
+
+const words = [
+
+{
+word: "солнце",
+questions: [
+"Это есть в каждой звездной системе, но для нас оно одно такое.",
+"Без этого жизнь на Земле вымерла бы за считанные дни.",
+"Это дарит нам свет и тепло каждый день.",
+"До него примерно 150 миллионов километров.",
+"Летом от этого спасаются в тени и под зонтиками.",
+"Оно встает на востоке и садится на западе.",
+"Главная звезда нашей системы, желтый карлик."
+]
+},
+
+{
+word: "книга",
+questions: [
+"В этом хранятся тысячи чужих мыслей и фантазий.",
+"Это может быть сделано из бумаги или существовать в цифре.",
+"Чтобы узнать, что внутри, нужно уметь читать.",
+"В ней есть обложка, страницы и главы.",
+"Их берут в библиотеке или покупают в магазине.",
+"Её часто читают перед сном.",
+"В ней напечатан текст, её перелистывают."
+]
+},
+
+{
+word: "телефон",
+questions: [
+"Раньше этот предмет был привязан проводом к стене.",
+"Теперь он лежит в кармане почти у каждого человека.",
+"С его помощью можно связаться с кем угодно на любом расстоянии.",
+"На нем есть экран, на который мы смотрим каждый день.",
+"На него скачивают игры, приложения и через него сидят в интернете.",
+"Когда на него кто-то звонит, он издает рингтон.",
+"Мобильное устройство для звонков и сообщений."
+]
+},
+
+{
+word: "огонь",
+questions: [
+"Он может согреть в холод, но может и уничтожить всё вокруг.",
+"Для его существования нужен кислород.",
+"Он бывает красного, желтого или оранжевого цвета.",
+"Если до него дотронуться, будет сильный ожог.",
+"На нем готовят еду в походах и на костре.",
+"Он горит от спички или зажигалки.",
+"Пламя, горящий костер."
+]
+},
+
+{
+word: "компьютер",
+questions: [
+"Это устройство вычисляет миллионы операций в секунду.",
+"К нему часто подключают клавиатуру, мышь и монитор.",
+"На нём работают программисты, дизайнеры и геймеры.",
+"Внутри него есть процессор и видеокарта.",
+"На нем запускают Windows или другую систему.",
+"Без него нельзя поиграть в PC-игры.",
+"Персональное электронное устройство (ПК)."
+]
+},
+
+{
+word: "время",
+questions: [
+"Его нельзя увидеть или потрогать, но оно всегда идет только вперед.",
+"Его часто не хватает, когда ты опаздываешь.",
+"Его измеряют в секундах, минутах и часах.",
+"Оно отображается на циферблате или электронном табло.",
+"Его отсчитывают будильники и секундомеры.",
+"Говорят, что оно «летит», когда нам весело.",
+"То, что показывают часы."
+]
+},
+
+{
+word: "дождь",
+questions: [
+"Это явление приходит с неба, когда собираются тучи.",
+"Это часть круговорота воды в природе.",
+"Из-за этого на улице появляются лужи.",
+"Чтобы не промокнуть под ним, берут зонт или дождевик.",
+"Оно падает на землю в виде капель воды.",
+"Бывает слепым, проливным или грибным.",
+"Осадки, падающие капельками с неба."
+]
+},
+
+{
+word: "музыка",
+questions: [
+"Это состоит из звуков, ритма и гармонии.",
+"Она может вызывать слезы, радость или мурашки по коже.",
+"Её создают композиторы и музыканты.",
+"Её слушают в наушниках или через колонки.",
+"У неё есть разные жанры: рок, поп, рэп, классика.",
+"Под неё танцуют и поют.",
+"Мелодия со словами или без."
+]
+},
+
+{
+word: "кошка",
+questions: [
+"Это животное считает себя хозяином в доме.",
+"Оно отлично видит в темноте и очень гибкое.",
+"У него есть усы, пушистый хвост и острые когти.",
+"Оно любит ловить мышей и спать по 16 часов в сутки.",
+"Когда его гладят, оно мурчит.",
+"Оно издает звук «мяу».",
+"Домашнее пушистое животное, враг собак."
+]
+},
+
+{
+word: "пицца",
+questions: [
+"Это блюдо родом из Италии, но популярно во всем мире.",
+"Её заказывают на компании и праздники в больших коробках.",
+"В её основе лежит круглое тесто с соусом.",
+"Сверху обязательно кладется расплавленный сыр.",
+"Нарезка у неё обычно треугольными кусочками.",
+"Самые известные виды: Пепперони, Маргарита, 4 Сырa.",
+"Круглая лепешка с начинкой и сыром."
+]
+},
+
+{
+word: "зеркало",
+questions: [
+"Оно показывает ровно то, что находится перед ним.",
+"В древности его делали из полированного металла.",
+"Считается, что если его разбить — это к неудаче.",
+"В него смотрят, когда расчесываются или чистят зубы.",
+"В нем можно увидеть свое отражение.",
+"Оно висит над раковиной в ванной.",
+"Стекло с отражающим слоем, в которое мы смотрим на себя."
+]
+},
+
+{
+word: "школа",
+questions: [
+"Это место, куда заходят утром с портфелями и рюкзаками.",
+"Здесь есть классы, парты, доски и мел.",
+"Там ставят оценки от 1 до 5 (или буквы).",
+"Там дают домашние задания и проводят контрольные.",
+"Между уроками там бывают перемены.",
+"Там преподают учителя и учатся ученики.",
+"Учебное заведение для детей."
+]
+},
+
+{
+word: "футбол",
+questions: [
+"В эту игру играют две команды по 11 человек.",
+"Для игры нужно большое зеленое поле.",
+"Главный предмет игры — круглый мяч.",
+"Руками мяч может трогать только вратарь.",
+"Цель — забить мяч в ворота соперника.",
+"Самый популярный вид спорта в мире.",
+"Игра, где бьют ногами по мячу."
+]
+},
+
+{
+word: "мороженое",
+questions: [
+"Это любимое лакомство детей и взрослых, особенно летом.",
+"Если оставить его в тепле, оно быстро превратится в лужицу.",
+"Его делают из молока, сливок и сахара.",
+"Оно бывает в вафельном стаканчике, на палочке или в рожке.",
+"Бывает пломбиром, шоколадным или фруктовым льдом.",
+"Оно очень холодное и сладкое.",
+"Замороженный десерт."
+]
+},
+
+{
+word: "автомобиль",
+questions: [
+"Это изобретение заменило лошадей и кареты.",
+"Для управления им нужно получить водительские права.",
+"У него есть двигатель, руль, педали и 4 колеса.",
+"Его заправляют бензином, дизелем или заряжают электричеством.",
+"Он едет по дорогам и стоит в пробках.",
+"В простонародье его называют машиной.",
+"Транспортное средство на четырех колесах."
+]
+},
+
+{
+word: "самолет",
+questions: [
+"Это транспорт, который передвигается не по земле и не по воде.",
+"Им управляет экипаж из пилотов и стюардесс.",
+"У него есть два больших крыла и турбины.",
+"Он взлетает с взлетно-посадочной полосы в аэропорту.",
+"Он летает выше облаков на огромной скорости.",
+"На нем летают в далекие страны и города по воздуху.",
+"Воздушное судно с крыльями."
+]
+},
+
+{
+word: "собака",
+questions: [
+"Это самое первое животное, которое приручил человек.",
+"Относится к семейству волчьих.",
+"Оно умеет вилять хвостом, когда радуется.",
+"Его выгуливают на поводке и учат командам.",
+"Говорят, что это самый верный «друг человека».",
+"Оно издает звук «гав-гав» и охраняет дом.",
+"Домашнее животное, которое лает."
+]
+},
+
+{
+word: "снег",
+questions: [
+"Это явление бывает только в холодное время года.",
+"Оно состоит из миллиардов крошечных замерзших кристалликов.",
+"Каждая его часть имеет уникальную форму шестиконечной снежинки.",
+"Когда он выпадает, всё вокруг становится белым.",
+"Из него лепят снежки и снеговиков.",
+"На нем катаются на санках и лыжах.",
+"Замерзшая белая вода, падающая зимой с неба."
+]
+},
+
+{
+word: "интернет",
+questions: [
+"Это невидимая сеть, объединяющая весь мир.",
+"Для подключения к нему нужен Wi-Fi или мобильные данные.",
+"Без него не работают соцсети, YouTube и онлайн-игры.",
+"В нем можно найти ответ абсолютно на любой вопрос.",
+"В нем есть сайты, браузеры и поисковики.",
+"Говорят «сидеть в ...».",
+"Всемирная паутина, глобальная компьютерная сеть."
+]
+},
+
+{
+word: "часы",
+questions: [
+"Этот предмет есть на стене, на руке и в каждом смартфоне.",
+"В древности они были солнечными, песочными или водяными.",
+"У них есть циферблат и маленькие детали.",
+"В них тикает механизм.",
+"На них есть стрелки: часовая, минутная и секундная.",
+"Они помогают нам не опаздывать и знать точное время.",
+"Прибор для измерения времени."
+]
+},
+
+{
+word: "кровать",
+questions: [
+"На этом предмете мебели человек проводит около 1/3 своей жизни.",
+"В комплекте к нему идут матрас, подушка и одеяло.",
+"Это первое место, куда хочется лечь после тяжелого дня.",
+"На нее ложатся, когда выключают свет в спальне.",
+"На ней засыпают и видят сны.",
+"Утром её нужно заправлять.",
+"Мебель для сна."
+]
+},
+
+{
+word: "деньги",
+questions: [
+"Из-за этого предмета люди ходят на работу.",
+"Раньше вместо этого использовали редкие ракушки или скот.",
+"Они бывают бумажными, металлическими или цифровыми на карте.",
+"На них покупают еду, одежду и оплачивают услуги.",
+"В разных странах они называются по-разному: рубли, доллары, евро.",
+"Их хранят в кошельке или в банке.",
+"Средство оплаты, купюры и монеты."
+]
+},
+
+{
+word: "океан",
+questions: [
+"Это занимает более 70% поверхности нашей планеты.",
+"Вода в нем соленая и непригодна для питья без очистки.",
+"В нем живут киты, акулы, дельфины и гигантские кальмары.",
+"На планете их всего пять: Тихий, Атлантический, Индийский, Северный Ледовитый и Южный.",
+"У него огромная глубина и постоянные волны.",
+"Это гораздо больше, чем море или озеро.",
+"Самый большой водный объект на Земле."
+]
+},
+
+{
+word: "кино",
+questions: [
+"Чтобы посмотреть это на большом экране, берут попкорн и колу.",
+"Для создания этого нужны режиссер, актеры и оператор.",
+"Это бывают фильмы, мультфильмы и сериалы.",
+"Его смотрят в специальных залах с мягкими креслами и темным освещением.",
+"Оно бывает разных жанров: комедия, ужасы, боевик, фантастика.",
+"В него ходят по билетам в кинотеатр.",
+"Фильм, видеокартина."
+]
+},
+
+{
+word: "наушники",
+questions: [
+"Этот парный аксессуар подключается к телефону или ПК.",
+"Они позволяют слушать звук так, чтобы не мешать окружающим.",
+"Они бывают проводными и беспроводными (Bluetooth).",
+"Их надевают на уши или вставляют внутрь ушей.",
+"Из них слушают музыку, подкасты или шаги в играх.",
+"Популярные модели — AirPods или накладные игровые с микрофоном.",
+"Устройство для индивидуального прослушивания звука."
+]
+},
+
+{
+word: "лес",
+questions: [
+"Это экосистема, занимающая огромные территории планеты.",
+"Это место называют «легкими Земли», так как там выделяется много кислорода.",
+"Там растет множество деревьев, кустарников и грибов.",
+"Там живут дикие звери: медведи, волки, лисы и белки.",
+"В нем легко заблудиться, если сойти с тропинки.",
+"Бывает хвойным, лиственным или тайгой.",
+"Пространство, заросшее деревьями."
+]
+},
+
+{
+word: "зерно",
+questions: [
+"Из этого маленького объекта вырастает новое растение.",
+"Его собирают комбайнами с полей.",
+"Его перемалывают на мельницах, чтобы получить муку.",
+"Из этой муки пекут хлеб, булочки и пироги.",
+"Бывает пшеничным, ржаным, овсяным или кофейным.",
+"Его клюют птицы на ферме.",
+"Семечко злаковых культур (пшеницы, ржи)."
+]
+},
+
+{
+word: "очки",
+questions: [
+"Этот аксессуар носят прямо на лице.",
+"Он состоит из оправы, дужек и двух стекол/линз.",
+"Они помогают лучше видеть тем, у кого слабое зрение.",
+"Летом их носят с темными стеклами для защиты от солнца.",
+"Их надевают на нос и зацепляют за уши.",
+"Их выписывает врач-окулист.",
+"Оптический прибор для улучшения зрения или защиты от солнца."
+]
+},
+
+{
+word: "рюкзак",
+questions: [
+"Этот предмет незаменим для туристов, путешественников и школьников.",
+"В отличие от сумки, он оставляет руки абсолютно свободными.",
+"У него есть молнии, карманы и лямки.",
+"Его носят за спиной на двух плечах.",
+"В него складывают учебники, тетради, пенал или вещи в поход.",
+"Школьный портфель за спиной.",
+"Заплечная сумка."
+]
+},
+
+{
+word: "ключ",
+questions: [
+"Без этого предмета трудно попасть домой или завести старую машину.",
+"Его часто носят на брелоке в кармане или сумке.",
+"Если его потерять, придется менять замок.",
+"Он бывает металлическим, гаечным, а еще скрипичным в музыке.",
+"Им отпирают и запирают двери.",
+"Его вставляют в замочную скважину и поворачивают.",
+"Инструмент для открывания замка."
+]
+}
+
+];
+
+
+/* =========================================
+   НАСТРОЙКИ
+========================================= */
+
+const rewards = [100, 80, 60, 40, 30, 20, 10];
+
+const themes = [
+    {
+        id: "classic",
+        name: "Классический синий",
+        price: 0,
+        description: "Базовый дизайн.",
+        className: "",
+        preview: "linear-gradient(135deg,#162b52,#4d8dff)"
+    },
+    {
+        id: "neon",
+        name: "Тёмный неоновый",
+        price: 200,
+        description: "Неоново-фиолетовая и зелёная гамма.",
+        className: "theme-neon",
+        preview: "linear-gradient(135deg,#08050e,#b84dff,#26e6a3)"
+    },
+    {
+        id: "gold",
+        name: "Золотой разум",
+        price: 400,
+        description: "Роскошная золотисто-чёрная гамма.",
+        className: "theme-gold",
+        preview: "linear-gradient(135deg,#090704,#d8a72c,#ffe49a)"
+    },
+    {
+        id: "retro",
+        name: "Пиксельный ретро",
+        price: 600,
+        description: "Стиль старых 8-битных игр.",
+        className: "theme-retro",
+        preview: "linear-gradient(135deg,#111,#42e66b,#ffe047)"
+    },
+    {
+        id: "cyber",
+        name: "Киберпанк",
+        price: 1000,
+        description: "Футуристичный неоновый дизайн.",
+        className: "theme-cyber",
+        preview: "linear-gradient(135deg,#050914,#00eaff,#ff00cc)"
+    }
+];
+
+
+/* =========================================
+   СОСТОЯНИЕ
+========================================= */
+
+let currentUser = null;
+let currentGame = null;
+let currentQuestion = 0;
+
+function defaultProfile() {
+    return {
+        balance: 0,
+        wins: 0,
+        losses: 0,
+        guessedWords: [],
+        history: [],
+        themes: ["classic"],
+        activeTheme: "classic"
+    };
+}
+
+function getProfiles() {
+    return JSON.parse(localStorage.getItem("guessProfiles") || "{}");
+}
+
+function saveProfiles(profiles) {
+    localStorage.setItem("guessProfiles", JSON.stringify(profiles));
+}
+
+function getProfile() {
+    const profiles = getProfiles();
+
+    if (!profiles[currentUser]) {
+        profiles[currentUser] = defaultProfile();
+        saveProfiles(profiles);
+    }
+
+    return profiles[currentUser];
+}
+
+function saveProfile(profile) {
+    const profiles = getProfiles();
+    profiles[currentUser] = profile;
+    saveProfiles(profiles);
+}
+
+
+/* =========================================
+   LOGIN
+========================================= */
+
+function login(name) {
+    currentUser = name;
+
+    const profiles = getProfiles();
+
+    if (!profiles[name]) {
+        profiles[name] = defaultProfile();
+        saveProfiles(profiles);
+    }
+
+    document.getElementById("loginScreen").classList.add("hidden");
+    document.getElementById("app").classList.remove("hidden");
+
+    document.getElementById("username").textContent = name;
+
+    applyTheme();
+    updateBalance();
+    updateStats();
+
+    startGame();
+}
+
+function logout() {
+    currentUser = null;
+    currentGame = null;
+
+    document.getElementById("app").classList.add("hidden");
+    document.getElementById("loginScreen").classList.remove("hidden");
+}
+
+
+/* =========================================
+   ИГРА
+========================================= */
+
+function getRandomWord() {
+    return words[Math.floor(Math.random() * words.length)];
+}
+
+function startGame() {
+    currentGame = getRandomWord();
+    currentQuestion = 0;
+
+    document.getElementById("gameContent").classList.remove("hidden");
+    document.getElementById("result").classList.add("hidden");
+
+    document.getElementById("answerInput").value = "";
+
+    renderQuestion();
+
+    setTimeout(() => {
+        document.getElementById("answerInput").focus();
+    }, 100);
+}
+
+function renderQuestion() {
+    const q = currentGame.questions[currentQuestion];
+
+    document.getElementById("questionNumber").textContent =
+        `Мысль ${currentQuestion + 1} из 7`;
+
+    document.getElementById("potentialReward").textContent =
+        `Награда: ${rewards[currentQuestion]} 🧠`;
+
+    document.getElementById("progressFill").style.width =
+        `${((currentQuestion + 1) / 7) * 100}%`;
+
+    document.getElementById("question").textContent = q;
+
+    document.getElementById("answerInput").value = "";
+}
+
+function normalize(text) {
+    return text
+        .toLowerCase()
+        .trim()
+        .replace(/ё/g, "е")
+        .replace(/[.,!?;:"'«»()\-]/g, "")
+        .replace(/\s+/g, " ");
+}
+
+function checkAnswer(event) {
+    event.preventDefault();
+
+    const input = normalize(
+        document.getElementById("answerInput").value
+    );
+
+    if (!input) return;
+
+    const answer = normalize(currentGame.word);
+
+    /*
+       Принимаем точное слово.
+       Также разрешаем ответы вроде:
+       "это солнце"
+       "я думаю солнце"
+    */
+    const correct =
+        input === answer ||
+        input.includes(answer);
+
+    if (correct) {
+        winGame();
+        return;
+    }
+
+    if (currentQuestion < 6) {
+        currentQuestion++;
+        renderQuestion();
+
+        showTemporaryMessage("❌ Не угадал! Следующая мысль уже открыта.");
+    } else {
+        loseGame();
+    }
+}
+
+function showTemporaryMessage(text) {
+    const hint = document.querySelector(".hint");
+    const old = hint.textContent;
+
+    hint.textContent = text;
+    hint.style.color = "var(--danger)";
+
+    setTimeout(() => {
+        hint.textContent = old;
+        hint.style.color = "";
+    }, 1200);
+}
+
+function winGame() {
+    const profile = getProfile();
+    const reward = rewards[currentQuestion];
+
+    profile.balance += reward;
+    profile.wins++;
+
+    if (!profile.guessedWords.includes(currentGame.word)) {
+        profile.guessedWords.push(currentGame.word);
+    }
+
+    profile.history.unshift({
+        word: currentGame.word,
+        result: "win",
+        question: currentQuestion + 1,
+        reward: reward,
+        date: new Date().toLocaleString("ru-RU")
+    });
+
+    profile.history = profile.history.slice(0, 20);
+
+    saveProfile(profile);
+
+    updateBalance();
+    updateStats();
+
+    document.getElementById("gameContent").classList.add("hidden");
+
+    document.getElementById("result").classList.remove("hidden");
+
+    document.getElementById("result").innerHTML = `
+        <div class="result-icon">🎉</div>
+        <h2>Правильно!</h2>
+        <p>Слово: <b>${escapeHtml(currentGame.word)}</b></p>
+        <div class="reward">+${reward} 🧠</div>
+        <button class="main-btn next-btn" onclick="startGame()">
+            Следующее слово →
+        </button>
+    `;
+}
+
+function loseGame() {
+    const profile = getProfile();
+
+    profile.losses++;
+
+    profile.history.unshift({
+        word: currentGame.word,
+        result: "loss",
+        question: 7,
+        reward: 0,
+        date: new Date().toLocaleString("ru-RU")
+    });
+
+    profile.history = profile.history.slice(0, 20);
+
+    saveProfile(profile);
+
+    updateStats();
+
+    document.getElementById("gameContent").classList.add("hidden");
+
+    document.getElementById("result").classList.remove("hidden");
+
+    document.getElementById("result").innerHTML = `
+        <div class="result-icon">😢</div>
+        <h2>Попытки закончились</h2>
+        <p>Загаданное слово было:</p>
+        <div class="reward">${escapeHtml(currentGame.word)}</div>
+        <p>Награда: 0 🧠</p>
+
+        <button class="main-btn next-btn" onclick="startGame()">
+            Попробовать ещё →
+        </button>
+    `;
+}
+
+
+/* =========================================
+   БАЛАНС / СТАТИСТИКА
+========================================= */
+
+function updateBalance() {
+    document.getElementById("balance").textContent =
+        getProfile().balance;
+}
+
+function updateStats() {
+    const profile = getProfile();
+
+    document.getElementById("wins").textContent =
+        profile.wins;
+
+    document.getElementById("losses").textContent =
+        profile.losses;
+
+    document.getElementById("wordsCount").textContent =
+        profile.guessedWords.length;
+
+    const history = document.getElementById("history");
+
+    if (!profile.history.length) {
+        history.innerHTML =
+            `<p class="subtitle">Пока нет сыгранных раундов.</p>`;
+        return;
+    }
+
+    history.innerHTML = profile.history.map(item => `
+        <div style="
+            padding:15px 0;
+            border-bottom:1px solid rgba(255,255,255,.07);
+            display:flex;
+            justify-content:space-between;
+            gap:15px;
+        ">
+            <div>
+                ${item.result === "win" ? "✅" : "❌"}
+                <b>${escapeHtml(item.word)}</b>
+                <div style="color:var(--muted);font-size:13px">
+                    ${item.date}
+                </div>
+            </div>
+
+            <div style="text-align:right">
+                ${item.result === "win"
+                    ? `+${item.reward} 🧠`
+                    : `0 🧠`}
+            </div>
+        </div>
+    `).join("");
+}
+
+
+/* =========================================
+   НАВИГАЦИЯ
+========================================= */
+
+function showPage(page, button) {
+    document.querySelectorAll(".page")
+        .forEach(el => el.classList.remove("active"));
+
+    document.querySelectorAll(".tab")
+        .forEach(el => el.classList.remove("active"));
+
+    document.getElementById(page + "Page")
+        .classList.add("active");
+
+    button.classList.add("active");
+
+    if (page === "stats") {
+        updateStats();
+    }
+
+    if (page === "shop") {
+        renderShop();
+    }
+}
+
+
+/* =========================================
+   МАГАЗИН
+========================================= */
+
+function renderShop() {
+    const profile = getProfile();
+
+    document.getElementById("shopGrid").innerHTML =
+        themes.map(theme => {
+
+            const owned = profile.themes.includes(theme.id);
+            const active = profile.activeTheme === theme.id;
+
+            let buttonText = "";
+
+            if (active) {
+                buttonText = "✓ Используется";
+            } else if (owned) {
+                buttonText = "Использовать";
+            } else if (theme.price === 0) {
+                buttonText = "Получить";
+            } else {
+                buttonText = `Купить за ${theme.price} 🧠`;
+            }
+
+            return `
+                <div class="theme-card">
+
+                    <div
+                        class="theme-preview"
+                        style="background:${theme.preview}"
+                    ></div>
+
+                    <h3>${theme.name}</h3>
+
+                    <p>${theme.description}</p>
+
+                    <div class="price">
+                        ${theme.price === 0
+                            ? "Бесплатно"
+                            : theme.price + " 🧠"}
+                    </div>
+
+                    <button
+                        class="theme-btn ${active ? "active" : ""}"
+                        onclick="useTheme('${theme.id}')"
+                        ${active ? "disabled" : ""}
+                    >
+                        ${buttonText}
+                    </button>
+
+                </div>
+            `;
+        }).join("");
+}
+
+function useTheme(themeId) {
+    const profile = getProfile();
+    const theme = themes.find(t => t.id === themeId);
+
+    if (!theme) return;
+
+    if (!profile.themes.includes(themeId)) {
+
+        if (profile.balance < theme.price) {
+            alert(
+                `Недостаточно Мыслишек 🧠\n\n` +
+                `Нужно: ${theme.price} 🧠\n` +
+                `У вас: ${profile.balance} 🧠`
+            );
+            return;
+        }
+
+        profile.balance -= theme.price;
+        profile.themes.push(themeId);
+    }
+
+    profile.activeTheme = themeId;
+
+    saveProfile(profile);
+
+    applyTheme();
+    updateBalance();
+    renderShop();
+}
+
+function applyTheme() {
+    const profile = getProfile();
+
+    document.body.classList.remove(
+        "theme-neon",
+        "theme-gold",
+        "theme-retro",
+        "theme-cyber"
+    );
+
+    const theme = themes.find(
+        t => t.id === profile.activeTheme
+    );
+
+    if (theme && theme.className) {
+        document.body.classList.add(theme.className);
+    }
+}
+
+
+/* =========================================
+   БЕЗОПАСНЫЙ HTML
+========================================= */
+
+function escapeHtml(text) {
+    return String(text)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+}
+
+</script>
+
+</body>
+</html>
